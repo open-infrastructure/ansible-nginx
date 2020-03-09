@@ -41,6 +41,32 @@ server {
 
     {% block server_end %}{% endblock %}
 
+{% if item.enable_ssl is defined and item.enable_ssl is sameas True %}
+{% if nginx_ssl_trusted_certificate is defined %}
+    ssl_trusted_certificate {{ nginx_ssl_trusted_certificate }};
+{% endif %}
+
+{% if nginx_ssl_certificate is defined %}
+    ssl_certificate {{ nginx_ssl_certificate }};
+{% endif %}
+
+{% if nginx_ssl_certificate_key is defined %}
+    ssl_certificate_key {{ nginx_ssl_certificate_key }};
+{% endif %}
+
+{% if nginx_tls_acme_challenge_root_location is defined %}
+    location ^~ /.well-known/acme-challenge/ {
+        allow all;
+        root {{ nginx_tls_acme_challenge_root_location }};
+        default_type "text/plain";
+        try_files $uri =404;
+    }
+{% endif %}
+
+    {{ nginx_tls_parameters|indent(4) }}
+
+{% endif %}
+
 {% if item.extra_parameters is defined %}
     {{ item.extra_parameters|indent(4) }}
 {% endif %}

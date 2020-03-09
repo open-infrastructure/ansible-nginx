@@ -64,6 +64,7 @@ nginx_vhosts: []
 #   root: "/var/www/example.com" # default: N/A
 #   index: "index.html index.htm" # default: "index.html index.htm"
 #   filename: "example.com.conf" # Can be used to set the vhost filename.
+#   enable_ssl: false # default N/A
 #
 #   # Properties that are only added if defined:
 #   server_name_redirect: "www.example.com" # default: N/A
@@ -83,6 +84,29 @@ nginx_upstreams: []
 #     "srv2.example.com weight=3",
 #     "srv3.example.com"
 #   }
+
+nginx_ssl_trusted_certificate: ""
+nginx_ssl_certificate: ""
+nginx_ssl_certificate_key: ""
+
+nginx_tls_acme_challenge_root_location: ""
+
+nginx_tls_parameters: |
+  ssl_session_timeout 1d;
+  ssl_session_cache shared:SSL:10m;
+  ssl_session_tickets off;
+
+  ssl_protocols TLSv1.2 TLSv1.3;
+  ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+  ssl_prefer_server_ciphers off;
+
+  ssl_stapling on;
+  ssl_stapling_verify on;
+  resolver_timeout 30s;
+
+  add_header Strict-Transport-Security "max-age=63072000" always;
+  add_header X-Frame-Options SAMEORIGIN;
+  add_header X-Content-Type-Options nosniff;
 
 nginx_log_format: |-
   '$remote_addr - $remote_user [$time_local] "$request" '
